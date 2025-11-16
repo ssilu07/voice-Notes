@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Voice Notes</string>
+    <string name="app_description">Simple and efficient voice-to-text note taking</string>
+
+    <!-- UI Strings -->
+    <string name="record_voice">Record voice</string>
+    <string name="stop_recording">Stop recording</string>
+    <string name="save_note">Save Note</string>
+    <string name="clear_text">Clear</string>
+    <string name="delete_note">Delete note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="share_note">Share note</string>
+    <string name="export_note">Export note</string>
+
+    <!-- Status Messages -->
+    <string name="tap_to_record">Tap microphone to start recording</string>
+    <string name="listening">🎤 Listening... Speak now!</string>
+    <string name="recording">🔴 Recording...</string>
+    <string name="processing">🔄 Processing speech...</string>
+    <string name="speech_converted">✅ Speech converted successfully!</string>
+
+    <!-- Error Messages -->
+    <string name="permission_required">Voice recording permission required</string>
+    <string name="speech_not_available">Speech recognition not available on this device</string>
+    <string name="network_error">Network error. Check your internet connection.</string>
+    <string name="no_speech_detected">No speech detected. Try speaking louder or closer to the microphone.</string>
+
+    <!-- Success Messages -->
+    <string name="note_saved">Note saved successfully! 📝</string>
+    <string name="note_deleted">Note deleted</string>
+    <string name="note_exported">Note exported to Downloads</string>
+    <string name="all_notes_exported">All notes exported</string>
+
+    <!-- Dialogs -->
+    <string name="delete_confirmation">Are you sure you want to delete this note?</string>
+    <string name="delete_all_confirmation">Are you sure you want to delete all notes? This action cannot be undone.</string>
+    <string name="clear_confirmation">Are you sure you want to clear the current note?</string>
+
+    <!-- Menu Items -->
+    <string name="action_delete_all">Delete All</string>
+    <string name="action_about">About</string>
+    <string name="action_language">Language</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- About -->
+    <string name="about_title">About Voice Notes</string>
+    <string name="about_version">Voice Notes v1.0</string>
+    <string name="about_description">A simple and efficient voice-to-text note taking app.</string>
+    <string name="about_developer">Developed with ❤️ by Royals</string>
+
+    <!-- File Provider -->
+    <string name="file_provider_authority">com.royals.voicenotes.fileprovider</string>
+</resources>
