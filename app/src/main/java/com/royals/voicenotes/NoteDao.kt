@@ -57,6 +57,8 @@ interface NoteDao {
 
 
 
+// (Event.kt file ko alag se banana hoga - Code neeche hai)
+
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: NoteRepository
     val allNotes: LiveData<List<Note>>
@@ -69,6 +71,17 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _operationStatus = MutableLiveData<String>()
     val operationStatus: LiveData<String> = _operationStatus
+
+    // --- YEH NAYA ADD KAREIN (Fragments ke beech communication ke liye) ---
+    private val _navigateToHome = MutableLiveData<Event<Unit>>()
+    val navigateToHome: LiveData<Event<Unit>> = _navigateToHome
+
+    private val _noteToEdit = MutableLiveData<Event<Note>>()
+    val noteToEdit: LiveData<Event<Note>> = _noteToEdit
+
+    private val _languageChanged = MutableLiveData<Event<String>>()
+    val languageChanged: LiveData<Event<String>> = _languageChanged
+    // --- YAHAN TAK ---
 
     init {
         val noteDao = NoteDatabase.getDatabase(application).noteDao()
@@ -86,99 +99,90 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun insert(note: Note) = viewModelScope.launch {
         try {
-            withContext(Dispatchers.IO) {
-                val insertedId = repository.insert(note)
-                Log.d("NoteViewModel", "Note inserted with ID: $insertedId")
-
-                withContext(Dispatchers.Main) {
-                    _operationStatus.value = "Note saved successfully!"
-                }
+            val insertedId = withContext(Dispatchers.IO) {
+                repository.insert(note)
             }
+            Log.d("NoteViewModel", "Note inserted with ID: $insertedId")
+            _operationStatus.postValue("Note saved successfully!")
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error inserting note", e)
-            withContext(Dispatchers.Main) {
-                _operationStatus.value = "Error saving note: ${e.message}"
-            }
+            _operationStatus.postValue("Error saving note: ${e.message}")
         }
     }
 
     fun update(note: Note) = viewModelScope.launch {
         try {
-            withContext(Dispatchers.IO) {
-                val rowsUpdated = repository.update(note)
-                Log.d("NoteViewModel", "Note updated: $rowsUpdated rows affected")
-
-                withContext(Dispatchers.Main) {
-                    _operationStatus.value = "Note updated successfully!"
-                }
+            val rowsUpdated = withContext(Dispatchers.IO) {
+                repository.update(note)
             }
+            Log.d("NoteViewModel", "Note updated: $rowsUpdated rows affected")
+            _operationStatus.postValue("Note updated successfully!")
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error updating note", e)
-            withContext(Dispatchers.Main) {
-                _operationStatus.value = "Error updating note: ${e.message}"
-            }
+            _operationStatus.postValue("Error updating note: ${e.message}")
         }
     }
 
     fun delete(note: Note) = viewModelScope.launch {
         try {
-            withContext(Dispatchers.IO) {
-                val rowsDeleted = repository.delete(note)
-                Log.d("NoteViewModel", "Note deleted: $rowsDeleted rows affected")
-
-                withContext(Dispatchers.Main) {
-                    _operationStatus.value = "Note deleted"
-                }
+            val rowsDeleted = withContext(Dispatchers.IO) {
+                repository.delete(note)
             }
+            Log.d("NoteViewModel", "Note deleted: $rowsDeleted rows affected")
+            _operationStatus.postValue("Note deleted")
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error deleting note", e)
-            withContext(Dispatchers.Main) {
-                _operationStatus.value = "Error deleting note: ${e.message}"
-            }
+            _operationStatus.postValue("Error deleting note: ${e.message}")
         }
     }
 
     fun deleteAll() = viewModelScope.launch {
         try {
-            withContext(Dispatchers.IO) {
-                val rowsDeleted = repository.deleteAll()
-                Log.d("NoteViewModel", "All notes deleted: $rowsDeleted rows")
-
-                withContext(Dispatchers.Main) {
-                    _operationStatus.value = "All notes deleted"
-                }
+            val rowsDeleted = withContext(Dispatchers.IO) {
+                repository.deleteAll()
             }
+            Log.d("NoteViewModel", "All notes deleted: $rowsDeleted rows")
+            _operationStatus.postValue("All notes deleted")
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error deleting all notes", e)
-            withContext(Dispatchers.Main) {
-                _operationStatus.value = "Error deleting all notes: ${e.message}"
-            }
+            _operationStatus.postValue("Error deleting all notes: ${e.message}")
         }
     }
 
     private fun updateStatistics() = viewModelScope.launch {
         try {
-            withContext(Dispatchers.IO) {
-                val count = repository.getNotesCount()
-                val words = repository.getTotalWordCount()
+            val count = withContext(Dispatchers.IO) { repository.getNotesCount() }
+            val words = withContext(Dispatchers.IO) { repository.getTotalWordCount() }
 
-                withContext(Dispatchers.Main) {
-                    _notesCount.value = count
-                    _totalWords.value = words
-                }
-            }
+            _notesCount.postValue(count)
+            _totalWords.postValue(words)
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error updating statistics", e)
-            withContext(Dispatchers.Main) {
-                _notesCount.value = 0
-                _totalWords.value = 0
-            }
+            _notesCount.postValue(0)
+            _totalWords.postValue(0)
         }
     }
 
     fun clearOperationStatus() {
         _operationStatus.value = ""
     }
+
+    // --- YEH NAYE FUNCTIONS ADD KAREIN ---
+    /**
+     * SavedNotesFragment se call hoga jab edit button click hoga
+     */
+    fun onEditNoteClicked(note: Note) {
+        _noteToEdit.value = Event(note)
+        _navigateToHome.value = Event(Unit) // HomeFragment pe navigate karne ka signal
+    }
+
+    /**
+     * Language change ko HomeFragment tak pahunchane ke liye
+     */
+    fun onLanguageSelected(languageCode: String) {
+        _languageChanged.value = Event(languageCode)
+    }
+    // --- YAHAN TAK ---
 }
 
 // ====================================
