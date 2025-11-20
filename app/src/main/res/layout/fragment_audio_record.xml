@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    tools:context=".fragments.AudioRecordFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="32dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_mic"
+                    android:layout_marginEnd="12dp"
+                    app:tint="#2E7D32" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Voice Recording"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333" />
+
+                <ImageButton
+                    android:id="@+id/btnClose"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_close"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Close" />
+            </LinearLayout>
+
+            <!-- Recording Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="32dp"
+                    android:gravity="center"
+                    android:background="@android:color/white">
+
+                    <!-- Status Text -->
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ready to record"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#4285F4"
+                        android:layout_marginBottom="24dp" />
+
+                    <!-- Recording Indicator -->
+                    <View
+                        android:id="@+id/recordingIndicator"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/recording_indicator_bg"
+                        android:visibility="gone"
+                        android:layout_marginBottom="24dp" />
+
+                    <!-- Timer -->
+                    <TextView
+                        android:id="@+id/tvTimer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"
+                        android:textSize="48sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:fontFamily="monospace"
+                        android:layout_marginBottom="32dp" />
+
+                    <!-- Waveform Visualization Placeholder -->
+                    <View
+                        android:id="@+id/waveformView"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@drawable/waveform_bg"
+                        android:layout_marginBottom="24dp" />
+
+                    <!-- Recording Control Button -->
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btnStopRecording"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_stop"
+                        app:fabSize="normal"
+                        app:backgroundTint="#E53935"
+                        app:tint="@android:color/white"
+                        android:enabled="false" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Playback Controls (Hidden initially) -->
+            <LinearLayout
+                android:id="@+id/playbackControls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:background="@android:color/white">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Preview Recording"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="16dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <ImageButton
+                                android:id="@+id/btnPlayPause"
+                                android:layout_width="56dp"
+                                android:layout_height="56dp"
+                                android:src="@drawable/ic_play"
+                                android:background="@drawable/circle_button_bg"
+                                android:contentDescription="Play/Pause"
+                                android:enabled="false" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/btnDiscardRecording"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Discard"
+                    android:textColor="#B91C1C"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/button_outline_red"
+                    android:textAllCaps="false"
+                    android:drawableStart="@drawable/ic_delete"
+                    android:drawablePadding="8dp" />
+
+                <Button
+                    android:id="@+id/btnSaveRecording"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Save Recording"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:background="@drawable/button_background_green"
+                    android:textAllCaps="false"
+                    android:drawableStart="@drawable/ic_save"
+                    android:drawablePadding="8dp"
+                    android:enabled="false" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

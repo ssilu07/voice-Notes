@@ -1,37 +1,43 @@
-package com.royals.voicenotes
+package com.royals.voicenotes.fragments
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.SpeechRecognizer
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.royals.voicenotes.databinding.FragmentHomeBinding
+import com.royals.voicenotes.MainActivity
+import com.royals.voicenotes.Note
+import com.royals.voicenotes.NoteViewModel
+import com.royals.voicenotes.R
+import com.royals.voicenotes.SpeechHelper
+import com.royals.voicenotes.databinding.FragmentRecordBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
-class HomeFragment : Fragment() {
+class RecordFragment : Fragment() {
 
     // --- LOG TAG ---
-    private val TAG = "HomeFragmentSpeech"
+    private val TAG = "RecordFragmentSpeech"
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentRecordBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var speechRecognizer: SpeechRecognizer
@@ -70,7 +76,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentRecordBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -101,7 +107,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadNoteForEditing(note: Note) {
-        Log.d("HomeFragment", "Editing note: ${note.id}")
+        Log.d("RecordFragment", "Editing note: ${note.id}")
         binding.etNoteText.setText(note.content)
         currentNoteText = note.content // TextWatcher ise update kar dega
         currentEditingNote = note
@@ -147,7 +153,7 @@ class HomeFragment : Fragment() {
 
         binding.btnClear.setOnClickListener {
             if (currentNoteText.isNotEmpty() || binding.etNoteText.text.toString().isNotEmpty()) {
-                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                AlertDialog.Builder(requireContext())
                     .setTitle("Clear Note")
                     .setMessage("Are you sure you want to clear the current note?")
                     .setPositiveButton("Clear") { _, _ -> clearCurrentNote() }
@@ -246,7 +252,7 @@ class HomeFragment : Fragment() {
                         // ---
 
                         binding.tvStatus.text = "✅ Speech converted successfully!"
-                        binding.fabRecord.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+                        binding.fabRecord.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                     } else {
                         Log.w(TAG, "[Listener] onResults: Received null or empty results.")
                     }
@@ -292,7 +298,7 @@ class HomeFragment : Fragment() {
 
                 isListening = true
                 binding.fabRecord.setImageResource(R.drawable.ic_stop)
-                binding.fabRecord.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red_500)
+              //  binding.fabRecord.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.red_500)
                 binding.tvStatus.text = "🔄 Initializing..."
 
                 Log.i(TAG, "startListening: Calling speechRecognizer.startListening()")
@@ -327,7 +333,7 @@ class HomeFragment : Fragment() {
     private fun resetRecordingState() {
         isListening = false
         binding.fabRecord.setImageResource(R.drawable.ic_mic)
-        binding.fabRecord.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.primary_500)
+       // binding.fabRecord.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.primary_500)
     }
 
     private fun animateRecordingButton() {
@@ -353,7 +359,9 @@ class HomeFragment : Fragment() {
         }
 
         try {
-            val currentTime = SimpleDateFormat("MMM dd, yyyy - HH:mm", Locale.getDefault()).format(Date())
+            val currentTime = SimpleDateFormat("MMM dd, yyyy - HH:mm", Locale.getDefault()).format(
+                Date()
+            )
             val title = if (noteText.length > 30) noteText.substring(0, 30) + "..." else noteText
 
             if (currentEditingNote != null) {
@@ -372,7 +380,7 @@ class HomeFragment : Fragment() {
             }
             clearCurrentNote()
         } catch (e: Exception) {
-            Log.e("HomeFragment", "Error saving note", e)
+            Log.e("RecordFragment", "Error saving note", e)
             Toast.makeText(requireContext(), "Error saving note: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }

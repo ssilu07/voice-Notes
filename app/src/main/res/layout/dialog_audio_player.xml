@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_mic"
+            app:tint="#4285F4"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Audio Recording"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close" />
+
+    </LinearLayout>
+
+    <!-- Note Info Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="#F8F9FA">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvNoteTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginBottom="8dp"
+                tools:text="Voice Recording 14:30" />
+
+            <TextView
+                android:id="@+id/tvTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:drawableStart="@drawable/ic_time"
+                android:drawablePadding="4dp"
+                tools:text="Dec 15, 2024 - 14:30" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Status Text -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ready to play"
+        android:textSize="14sp"
+        android:textColor="#4285F4"
+        android:textAlignment="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Playback Progress -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="#4285F4"
+            android:thumbTint="#4285F4" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCurrentTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="00:00"
+                android:textSize="12sp"
+                android:textColor="#666666" />
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="12sp"
+                android:textColor="#666666" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Playback Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <!-- Rewind Button -->
+        <ImageButton
+            android:id="@+id/btnRewind"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_rewind"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Rewind 10s"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Play/Pause Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play"
+            app:fabSize="normal"
+            app:backgroundTint="#4285F4"
+            app:tint="@android:color/white"
+            android:layout_marginHorizontal="16dp" />
+
+        <!-- Fast Forward Button -->
+        <ImageButton
+            android:id="@+id/btnFastForward"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_fast_forward"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Fast forward 10s"
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Share"
+            android:textColor="#4285F4"
+            android:background="@drawable/button_outline_blue"
+            android:textAllCaps="false"
+            android:drawableStart="@drawable/ic_share"
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="8dp" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Delete"
+            android:textColor="#B91C1C"
+            android:background="@drawable/button_outline_red"
+            android:textAllCaps="false"
+            android:drawableStart="@drawable/ic_delete"
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

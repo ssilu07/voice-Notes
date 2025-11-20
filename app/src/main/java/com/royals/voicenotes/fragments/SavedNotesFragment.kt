@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -98,10 +100,7 @@ class SavedNotesFragment : Fragment() {
     private fun setupRecyclerView() {
         notesAdapter = NotesAdapter(
             onDeleteClick = { note -> showDeleteConfirmation(note) },
-            onEditClick = { note ->
-                // ViewModel ko batayein ki note edit karna hai aur Home tab par jaana hai
-                noteViewModel.onEditNoteClicked(note)
-            },
+            onEditClick = { note -> handleNoteClick(note) }, // UPDATED: Handle different note types
             onShareClick = { note -> shareNote(note) },
             onExportClick = { note -> exportNote(note) }
         )
@@ -111,6 +110,37 @@ class SavedNotesFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
         }
+    }
+
+    // NEW: Handle note click based on note type
+    private fun handleNoteClick(note: Note) {
+        when {
+            note.isAudioNote() -> {
+                // Show audio player dialog
+                showAudioPlayer(note)
+            }
+            note.isTextNote() -> {
+                // Navigate to view/edit fragment
+                val bundle = bundleOf("noteId" to note.id)
+                findNavController().navigate(R.id.action_saved_notes_to_view_note, bundle)
+            }
+            else -> {
+                Toast.makeText(requireContext(), "Unknown note type", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // NEW: Show audio player dialog
+    private fun showAudioPlayer(note: Note) {
+        val audioPlayerDialog = AudioPlayerDialog(
+            context = requireContext(),
+            note = note,
+            onDeleteClick = {
+                noteViewModel.delete(note)
+                Toast.makeText(requireContext(), "Audio recording deleted", Toast.LENGTH_SHORT).show()
+            }
+        )
+        audioPlayerDialog.show()
     }
 
     private fun setupSwipeToDelete() {
@@ -135,15 +165,20 @@ class SavedNotesFragment : Fragment() {
     }
 
     private fun showDeleteConfirmation(note: Note) {
+        val noteType = if (note.isAudioNote()) "audio recording" else "note"
+
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("Delete Note")
+            .setTitle("Delete ${noteType.capitalize()}")
             .setMessage("Are you sure you want to delete '${note.title}'?")
             .setPositiveButton("Delete") { _, _ ->
+                // Delete audio file if it's an audio note
+                if (note.isAudioNote() && note.audioFilePath != null) {
+                    java.io.File(note.audioFilePath).delete()
+                }
+
                 noteViewModel.delete(note)
                 lastDeletedNote = note
-
-                // Snackbar ya Toast se Undo ka option de sakte hain
-                // Yahan simple delete confirmation istemal kar rahe hain
+                Toast.makeText(requireContext(), "${noteType.capitalize()} deleted", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -157,7 +192,6 @@ class SavedNotesFragment : Fragment() {
                 val file = FileHelper.exportNoteToFile(requireContext(), note)
                 if (file != null) {
                     Toast.makeText(requireContext(), "Note exported to Downloads", Toast.LENGTH_LONG).show()
-                    // ... (Open file dialog) ...
                 } else {
                     Toast.makeText(requireContext(), "Failed to export note", Toast.LENGTH_SHORT).show()
                 }
@@ -175,7 +209,6 @@ class SavedNotesFragment : Fragment() {
                     val file = FileHelper.exportAllNotes(requireContext(), notes)
                     if (file != null) {
                         Toast.makeText(requireContext(), "All notes exported", Toast.LENGTH_LONG).show()
-                        // ... (Open file dialog) ...
                     } else {
                         Toast.makeText(requireContext(), "Failed to export notes", Toast.LENGTH_SHORT).show()
                     }

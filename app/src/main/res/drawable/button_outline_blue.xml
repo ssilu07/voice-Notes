@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- button_outline_blue.xml -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#404285F4">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="2dp" android:color="#4285F4" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</ripple>

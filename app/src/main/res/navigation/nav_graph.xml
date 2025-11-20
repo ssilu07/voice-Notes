@@ -9,10 +9,48 @@
         android:id="@+id/nav_home"
         android:name="com.royals.voicenotes.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_record"
+            app:destination="@id/nav_record" />
+        <action
+            android:id="@+id/action_nav_home_to_audio_record"
+            app:destination="@id/nav_audio_record" />
+        <action
+            android:id="@+id/action_nav_home_to_view_note"
+            app:destination="@id/nav_view_note" />
+    </fragment>
+
     <fragment
         android:id="@+id/nav_saved_notes"
         android:name="com.royals.voicenotes.SavedNotesFragment"
         android:label="Saved Notes"
-        tools:layout="@layout/fragment_saved_notes" />
+        tools:layout="@layout/fragment_saved_notes" >
+        <action
+            android:id="@+id/action_saved_notes_to_view_note"
+            app:destination="@id/nav_view_note" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_record"
+        android:name="com.royals.voicenotes.fragments.RecordFragment"
+        android:label="Record"
+        tools:layout="@layout/fragment_record" />
+
+    <fragment
+        android:id="@+id/nav_audio_record"
+        android:name="com.royals.voicenotes.fragments.AudioRecordFragment"
+        android:label="Audio Recording"
+        tools:layout="@layout/fragment_audio_record" />
+
+    <fragment
+        android:id="@+id/nav_view_note"
+        android:name="com.royals.voicenotes.fragments.ViewNoteFragment"
+        android:label="View Note"
+        tools:layout="@layout/fragment_view_note" >
+        <argument
+            android:name="noteId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 </navigation>

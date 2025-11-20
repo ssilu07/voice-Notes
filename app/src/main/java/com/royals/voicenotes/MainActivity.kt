@@ -1,7 +1,9 @@
 package com.royals.voicenotes
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -40,8 +42,39 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Bottom Nav ko NavController se jodein
-        binding.bottomNavigationView.setupWithNavController(navController)
+        // Bottom Navigation ke liye custom listener
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    // Pop back stack to home if we're not already there
+                    if (navController.currentDestination?.id != R.id.nav_home) {
+                        navController.popBackStack(R.id.nav_home, false)
+                    }
+                    true
+                }
+                R.id.nav_saved_notes -> {
+                    // Navigate to saved notes, clearing back stack
+                    if (navController.currentDestination?.id != R.id.nav_saved_notes) {
+                        navController.navigate(R.id.nav_saved_notes)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // NavController ke destination changes ko listen karein
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Bottom navigation item ko select karein based on current destination
+            when (destination.id) {
+                R.id.nav_home -> binding.bottomNavigationView.menu.findItem(R.id.nav_home)?.isChecked = true
+                R.id.nav_saved_notes -> binding.bottomNavigationView.menu.findItem(R.id.nav_saved_notes)?.isChecked = true
+            }
+        }
+
+        binding.fab.setOnClickListener {
+            navController.navigate(R.id.nav_record)
+        }
     }
 
     private fun observeViewModel() {
@@ -141,9 +174,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openAppSettings() {
-        val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = android.net.Uri.fromParts("package", packageName, null)
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", packageName, null)
         }
         startActivity(intent)
+    }
+
+    // Handle back button press
+    override fun onBackPressed() {
+        // If we're at home or saved notes, exit the app
+        if (navController.currentDestination?.id == R.id.nav_home ||
+            navController.currentDestination?.id == R.id.nav_saved_notes) {
+            super.onBackPressed()
+        } else {
+            // Otherwise, navigate back to home
+            navController.popBackStack(R.id.nav_home, false)
+        }
     }
 }
