@@ -135,7 +135,7 @@ class AudioRecordFragment : Fragment() {
         try {
             // Create file path
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val fileName = "voice_recording_$timestamp.3gp"
+            val fileName = "voice_recording_$timestamp.m4a"
             val audioDir = File(requireContext().getExternalFilesDir(null), "VoiceRecordings")
             if (!audioDir.exists()) {
                 audioDir.mkdirs()
@@ -145,8 +145,8 @@ class AudioRecordFragment : Fragment() {
             // Setup MediaRecorder
             mediaRecorder = MediaRecorder().apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
                 setOutputFile(audioFilePath)
                 prepare()
                 start()
@@ -176,31 +176,33 @@ class AudioRecordFragment : Fragment() {
     }
 
     private fun stopRecording() {
+        if (!isRecording) return
         try {
-            if (isRecording) {
-                mediaRecorder?.apply {
+            mediaRecorder?.apply {
+                try {
                     stop()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error stopping recorder", e)
+                } finally {
                     release()
                 }
-                mediaRecorder = null
-                isRecording = false
-                recordingDuration = System.currentTimeMillis() - recordingStartTime
-
-                // Stop timer
-                handler.removeCallbacks(updateTimerRunnable)
-
-                // Update UI
-                binding.tvStatus.text = "✅ Recording completed"
-                binding.btnStopRecording.isEnabled = false
-                binding.btnPlayPause.isEnabled = true
-                binding.btnSaveRecording.isEnabled = true
-                binding.recordingIndicator.visibility = View.GONE
-                binding.playbackControls.visibility = View.VISIBLE
-                binding.btnPlayPause.setImageResource(R.drawable.ic_play)
-
-                Log.i(TAG, "Recording stopped. Duration: ${recordingDuration}ms")
-                Toast.makeText(requireContext(), "Recording saved!", Toast.LENGTH_SHORT).show()
             }
+            mediaRecorder = null
+            isRecording = false
+            recordingDuration = System.currentTimeMillis() - recordingStartTime
+
+            handler.removeCallbacks(updateTimerRunnable)
+
+            binding.tvStatus.text = "✅ Recording completed"
+            binding.btnStopRecording.isEnabled = false
+            binding.btnPlayPause.isEnabled = true
+            binding.btnSaveRecording.isEnabled = true
+            binding.recordingIndicator.visibility = View.GONE
+            binding.playbackControls.visibility = View.VISIBLE
+            binding.btnPlayPause.setImageResource(R.drawable.ic_play)
+
+            Log.i(TAG, "Recording stopped. Duration: ${recordingDuration}ms")
+            Toast.makeText(requireContext(), "Recording saved!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to stop recording", e)
             Toast.makeText(requireContext(), "Error stopping recording", Toast.LENGTH_SHORT).show()
@@ -342,26 +344,36 @@ class AudioRecordFragment : Fragment() {
     }
 
     private fun releaseMediaPlayer() {
-        mediaPlayer?.apply {
-            if (isPlaying) {
-                stop()
+        try {
+            mediaPlayer?.apply {
+                try {
+                    if (isPlaying) stop()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error stopping player", e)
+                } finally {
+                    release()
+                }
             }
-            release()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error releasing player", e)
         }
         mediaPlayer = null
         isPlaying = false
     }
 
     private fun releaseMediaRecorder() {
-        mediaRecorder?.apply {
-            if (isRecording) {
+        try {
+            mediaRecorder?.apply {
                 try {
-                    stop()
+                    if (isRecording) stop()
                 } catch (e: Exception) {
                     Log.e(TAG, "Error stopping recorder", e)
+                } finally {
+                    release()
                 }
             }
-            release()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error releasing recorder", e)
         }
         mediaRecorder = null
         isRecording = false
