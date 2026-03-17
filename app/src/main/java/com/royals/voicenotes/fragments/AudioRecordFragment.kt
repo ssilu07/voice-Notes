@@ -18,16 +18,19 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.royals.voicenotes.Constants
 import com.royals.voicenotes.Note
 import com.royals.voicenotes.NoteViewModel
 import com.royals.voicenotes.R
 import com.royals.voicenotes.databinding.FragmentAudioRecordBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@AndroidEntryPoint
 class AudioRecordFragment : Fragment() {
 
     private val TAG = "AudioRecordFragment"
@@ -43,16 +46,17 @@ class AudioRecordFragment : Fragment() {
 
     private var isRecording = false
     private var isPlaying = false
+    private var isTransitioning = false  // Guard against rapid button clicks
     private var recordingStartTime: Long = 0
     private var recordingDuration: Long = 0
 
     private val handler = Handler(Looper.getMainLooper())
     private val updateTimerRunnable = object : Runnable {
         override fun run() {
-            if (isRecording) {
+            if (isRecording && _binding != null) {
                 val elapsed = System.currentTimeMillis() - recordingStartTime
                 updateTimerDisplay(elapsed)
-                handler.postDelayed(this, 100)
+                handler.postDelayed(this, Constants.TIMER_UPDATE_INTERVAL_MS)
             }
         }
     }
@@ -66,7 +70,7 @@ class AudioRecordFragment : Fragment() {
             startRecording()
         } else {
             Log.e(TAG, "Audio permission denied")
-            Toast.makeText(requireContext(), "Audio recording permission is required", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.recording_permission_required), Toast.LENGTH_LONG).show()
             findNavController().navigateUp()
         }
     }
@@ -88,12 +92,13 @@ class AudioRecordFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnStopRecording.setOnClickListener {
-            if (isRecording) {
+            if (isRecording && !isTransitioning) {
                 stopRecording()
             }
         }
 
         binding.btnPlayPause.setOnClickListener {
+            if (isTransitioning) return@setOnClickListener
             if (isPlaying) {
                 pausePlayback()
             } else {
@@ -102,16 +107,16 @@ class AudioRecordFragment : Fragment() {
         }
 
         binding.btnSaveRecording.setOnClickListener {
-            saveRecording()
+            if (!isTransitioning) saveRecording()
         }
 
         binding.btnDiscardRecording.setOnClickListener {
-            showDiscardConfirmation()
+            if (!isTransitioning) showDiscardConfirmation()
         }
 
         binding.btnClose.setOnClickListener {
             if (isRecording) {
-                Toast.makeText(requireContext(), "Please stop recording first", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.stop_recording_first), Toast.LENGTH_SHORT).show()
             } else {
                 findNavController().navigateUp()
             }
@@ -132,6 +137,8 @@ class AudioRecordFragment : Fragment() {
     }
 
     private fun startRecording() {
+        if (isRecording || isTransitioning) return
+        isTransitioning = true
         try {
             // Create file path
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -171,12 +178,15 @@ class AudioRecordFragment : Fragment() {
 
         } catch (e: IOException) {
             Log.e(TAG, "Failed to start recording", e)
-            Toast.makeText(requireContext(), "Failed to start recording", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.recording_start_failed), Toast.LENGTH_SHORT).show()
+        } finally {
+            isTransitioning = false
         }
     }
 
     private fun stopRecording() {
-        if (!isRecording) return
+        if (!isRecording || isTransitioning) return
+        isTransitioning = true
         try {
             mediaRecorder?.apply {
                 try {
@@ -202,16 +212,20 @@ class AudioRecordFragment : Fragment() {
             binding.btnPlayPause.setImageResource(R.drawable.ic_play)
 
             Log.i(TAG, "Recording stopped. Duration: ${recordingDuration}ms")
-            Toast.makeText(requireContext(), "Recording saved!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.recording_started), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to stop recording", e)
-            Toast.makeText(requireContext(), "Error stopping recording", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.recording_stop_error), Toast.LENGTH_SHORT).show()
+        } finally {
+            isTransitioning = false
         }
     }
 
     private fun startPlayback() {
         try {
             if (audioFilePath != null && File(audioFilePath!!).exists()) {
+                // Release existing player before creating new one
+                releaseMediaPlayer()
                 mediaPlayer = MediaPlayer().apply {
                     setDataSource(audioFilePath)
                     prepare()
@@ -224,15 +238,17 @@ class AudioRecordFragment : Fragment() {
 
                 mediaPlayer?.setOnCompletionListener {
                     isPlaying = false
-                    binding.btnPlayPause.setImageResource(R.drawable.ic_play)
-                    binding.tvStatus.text = "✅ Recording completed"
+                    if (_binding != null) {
+                        binding.btnPlayPause.setImageResource(R.drawable.ic_play)
+                        binding.tvStatus.text = "✅ Recording completed"
+                    }
                 }
 
                 Log.i(TAG, "Playback started")
             }
         } catch (e: IOException) {
             Log.e(TAG, "Failed to start playback", e)
-            Toast.makeText(requireContext(), "Failed to play recording", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.playback_failed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -273,21 +289,21 @@ class AudioRecordFragment : Fragment() {
             )
 
             noteViewModel.insert(note)
-            Toast.makeText(requireContext(), "Recording saved successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.recording_saved_success), Toast.LENGTH_SHORT).show()
             findNavController().navigateUp()
         } else {
-            Toast.makeText(requireContext(), "No recording to save", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.no_recording_to_save), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun showDiscardConfirmation() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Discard Recording?")
-            .setMessage("Are you sure you want to discard this recording?")
-            .setPositiveButton("Discard") { _, _ ->
+            .setTitle(getString(R.string.discard_recording_title))
+            .setMessage(getString(R.string.discard_recording_message))
+            .setPositiveButton(getString(R.string.action_discard)) { _, _ ->
                 discardRecording()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.action_cancel), null)
             .show()
     }
 
@@ -295,11 +311,13 @@ class AudioRecordFragment : Fragment() {
         // Delete file
         if (audioFilePath != null) {
             val file = File(audioFilePath!!)
-            if (file.exists()) {
-                file.delete()
+            if (file.exists() && !file.delete()) {
+                android.util.Log.e("AudioRecordFragment", "Failed to delete recording: $audioFilePath")
+                Toast.makeText(requireContext(), getString(R.string.recording_delete_failed), Toast.LENGTH_SHORT).show()
+                return
             }
         }
-        Toast.makeText(requireContext(), "Recording discarded", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.recording_discarded), Toast.LENGTH_SHORT).show()
         findNavController().navigateUp()
     }
 
@@ -324,16 +342,17 @@ class AudioRecordFragment : Fragment() {
     }
 
     private fun animateRecordingIndicator() {
+        if (_binding == null) return
         binding.recordingIndicator.animate()
             .alpha(0.3f)
-            .setDuration(500)
+            .setDuration(Constants.RECORDING_ANIMATION_DURATION_MS)
             .withEndAction {
-                if (isRecording) {
+                if (isRecording && _binding != null) {
                     binding.recordingIndicator.animate()
                         .alpha(1f)
-                        .setDuration(500)
+                        .setDuration(Constants.RECORDING_ANIMATION_DURATION_MS)
                         .withEndAction {
-                            if (isRecording) {
+                            if (isRecording && _binding != null) {
                                 animateRecordingIndicator()
                             }
                         }
@@ -384,11 +403,15 @@ class AudioRecordFragment : Fragment() {
         if (isPlaying) {
             pausePlayback()
         }
+        // Stop recording when fragment goes to background (e.g. home button)
+        if (isRecording) {
+            stopRecording()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacks(updateTimerRunnable)
+        handler.removeCallbacksAndMessages(null)  // Clear ALL pending callbacks
         releaseMediaPlayer()
         releaseMediaRecorder()
         _binding = null

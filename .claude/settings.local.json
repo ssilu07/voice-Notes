@@ -4,7 +4,15 @@
       "Bash(xargs cat:*)",
       "Bash(./gradlew assembleDebug:*)",
       "Bash(java:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "Bash(export:*)",
+      "Read(//c/Users/Sumit Singh/.jdks//**)",
+      "Read(//c/Users/Sumit Singh/AndroidStudioProjects/VoiceNotes/$HOME/**)",
+      "Read(//c/Program Files/Android/Android Studio/jbr/**)",
+      "Read(//c/Users/Sumit Singh/AndroidStudioProjects/VoiceNotes/$LOCALAPPDATA/Programs/Android Studio/**)",
+      "Read(//c/Users/Sumit Singh/AndroidStudioProjects/VoiceNotes/$HOME/.jdks/**)",
+      "Bash(\"C:/Program Files/Android/Android Studio/jbr/bin/java\" -version 2>&1)",
+      "Bash(cd:*)"
     ]
   }
 }

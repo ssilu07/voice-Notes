@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="@android:color/white">
+        android:background="@color/surface">
 
         <!-- Header with Title and Actions -->
         <LinearLayout
@@ -42,7 +42,7 @@
                 android:layout_weight="1"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:maxLines="1"
                 android:ellipsize="end"
                 tools:text="Sample note title..." />
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textSize="14sp"
-            android:textColor="#666666"
+            android:textColor="@color/text_secondary"
             android:lineSpacingMultiplier="1.3"
             android:maxLines="3"
             android:ellipsize="end"
@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:text="156 words"
                 android:textSize="11sp"
-                android:textColor="#999999"
+                android:textColor="@color/text_hint"
                 android:background="@drawable/word_count_bg"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp" />
@@ -143,7 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="#999999"
+                android:textColor="@color/text_hint"
                 android:drawableStart="@drawable/ic_time"
                 android:drawablePadding="4dp"
                 tools:text="Dec 15, 2024 - 14:30" />

@@ -9,6 +9,28 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_dark_mode"
+        android:title="@string/action_dark_mode"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_biometric_lock"
+        android:title="@string/biometric_lock"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_backup"
+        android:title="@string/action_backup"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_restore"
+        android:title="@string/action_restore_backup"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_delete_all"
         android:title="@string/action_delete_all"
         android:icon="@drawable/ic_delete_all"

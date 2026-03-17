@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     tools:context=".HomeFragment">
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:text="Quick Actions"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:layout_marginBottom="12dp"/>
 
         <LinearLayout
@@ -37,7 +37,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#D7F9E3">
+                app:cardBackgroundColor="@color/card_green_bg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,14 +50,14 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:src="@drawable/ic_mic"
-                        app:tint="#2E7D32"
+                        app:tint="@color/card_green_text"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Start Recording"
-                        android:textColor="#2E7D32"
+                        android:textColor="@color/card_green_text"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -70,7 +70,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
                 android:layout_marginStart="8dp"
-                app:cardBackgroundColor="#D6EAF8">
+                app:cardBackgroundColor="@color/card_blue_bg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -83,14 +83,14 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:src="@drawable/ic_edit"
-                        app:tint="#2874A6"
+                        app:tint="@color/card_blue_text"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="New Text Note"
-                        android:textColor="#2874A6"
+                        android:textColor="@color/card_blue_text"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -104,7 +104,7 @@
             android:text="Smart Features"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:layout_marginBottom="12dp"/>
 
         <LinearLayout
@@ -121,7 +121,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
                 android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#FEF9E7">
+                app:cardBackgroundColor="@color/card_orange_bg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -133,13 +133,13 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_lightbulb"
-                        app:tint="#B7950B"
+                        app:tint="@color/card_orange_text"
                         android:layout_marginEnd="12dp"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Summarize\nLong Notes"
-                        android:textColor="#B7950B"
+                        android:textColor="@color/card_orange_text"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -152,7 +152,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
                 android:layout_marginStart="8dp"
-                app:cardBackgroundColor="#E8DAEF">
+                app:cardBackgroundColor="@color/card_purple_bg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -164,13 +164,13 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_tag"
-                        app:tint="#884EA0"
+                        app:tint="@color/card_purple_text"
                         android:layout_marginEnd="12dp"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Generate Tags\nfrom Audio"
-                        android:textColor="#884EA0"
+                        android:textColor="@color/card_purple_text"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -184,7 +184,7 @@
             android:text="Recent Notes"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="@color/text_primary"
             android:layout_marginBottom="12dp"/>
 
         <androidx.recyclerview.widget.RecyclerView

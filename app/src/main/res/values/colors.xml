@@ -125,4 +125,24 @@
     <!-- Additional System Colors -->
     <color name="transparent">#00000000</color>
     <color name="semi_transparent">#80000000</color>
+
+    <!-- Card feature colors (light variants) -->
+    <color name="card_green_bg">#D7F9E3</color>
+    <color name="card_green_text">#2E7D32</color>
+    <color name="card_blue_bg">#D6EAF8</color>
+    <color name="card_blue_text">#2874A6</color>
+    <color name="card_purple_bg">#E8DAEF</color>
+    <color name="card_purple_text">#884EA0</color>
+    <color name="card_orange_bg">#FEF9E7</color>
+    <color name="card_orange_text">#B7950B</color>
+
+    <!-- Stats card -->
+    <color name="stats_divider">#E0E0E0</color>
+    <color name="stats_label">#666666</color>
+
+    <!-- Dialog surface -->
+    <color name="dialog_surface">#FFFFFF</color>
+
+    <!-- Seekbar/progress -->
+    <color name="seekbar_color">@color/primary_500</color>
 </resources>

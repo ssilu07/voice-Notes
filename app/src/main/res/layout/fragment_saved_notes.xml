@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     tools:context=".SavedNotesFragment">
 
     <ScrollView
@@ -57,6 +57,59 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Category Filter Chips -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAll"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_all"
+                        android:checked="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipGeneral"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_general" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipWork"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_work" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPersonal"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_personal" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipIdeas"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category_ideas" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/statsCard"
                 android:layout_width="match_parent"
@@ -72,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp"
-                    android:background="@android:color/white">
+                    android:background="@color/surface">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -88,21 +141,21 @@
                             android:text="0"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            android:textColor="#4285F4" />
+                            android:textColor="@color/primary_500" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Notes"
                             android:textSize="12sp"
-                            android:textColor="#666666" />
+                            android:textColor="@color/text_secondary" />
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="#E0E0E0"
+                        android:background="@color/stats_divider"
                         android:layout_marginHorizontal="16dp" />
 
                     <LinearLayout
@@ -119,14 +172,14 @@
                             android:text="0"
                             android:textSize="24sp"
                             android:textStyle="bold"
-                            android:textColor="#059669" />
+                            android:textColor="@color/green_600" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Words"
                             android:textSize="12sp"
-                            android:textColor="#666666" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -146,7 +199,7 @@
                     android:text="📝 Saved Notes"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_primary"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp" />
 
@@ -157,7 +210,7 @@
                     android:text="Export All"
                     android:textSize="12sp"
                     android:background="@drawable/button_text_style"
-                    android:textColor="#4285F4"
+                    android:textColor="@color/primary_500"
                     android:textAllCaps="false"
                     android:visibility="gone" />
 
@@ -182,7 +235,7 @@
                     android:layout_height="wrap_content"
                     android:text="No notes yet"
                     android:textAlignment="center"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_primary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
@@ -191,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:text="Start recording to create your first note! 🎤"
                     android:textAlignment="center"
-                    android:textColor="#666666"
+                    android:textColor="@color/text_secondary"
                     android:textSize="16sp"
                     android:lineSpacingMultiplier="1.2" />
 

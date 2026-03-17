@@ -33,7 +33,7 @@ class AudioPlayerDialog(
                     binding.seekBar.progress = currentPosition
                     binding.tvCurrentTime.text = formatTime(currentPosition)
 
-                    handler.postDelayed(this, 100)
+                    handler.postDelayed(this, Constants.TIMER_UPDATE_INTERVAL_MS)
                 }
             }
         }
@@ -111,7 +111,7 @@ class AudioPlayerDialog(
 
         binding.btnRewind.setOnClickListener {
             mediaPlayer?.let { player ->
-                val newPosition = (player.currentPosition - 10000).coerceAtLeast(0)
+                val newPosition = (player.currentPosition - Constants.SEEK_DURATION_MS).coerceAtLeast(0)
                 player.seekTo(newPosition)
                 binding.seekBar.progress = newPosition
             }
@@ -119,7 +119,7 @@ class AudioPlayerDialog(
 
         binding.btnFastForward.setOnClickListener {
             mediaPlayer?.let { player ->
-                val newPosition = (player.currentPosition + 10000).coerceAtMost(player.duration)
+                val newPosition = (player.currentPosition + Constants.SEEK_DURATION_MS).coerceAtMost(player.duration)
                 player.seekTo(newPosition)
                 binding.seekBar.progress = newPosition
             }
@@ -179,17 +179,20 @@ class AudioPlayerDialog(
 
     private fun showDeleteConfirmation() {
         androidx.appcompat.app.AlertDialog.Builder(context)
-            .setTitle("Delete Recording")
-            .setMessage("Are you sure you want to delete this audio recording?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle(context.getString(R.string.delete_recording_title))
+            .setMessage(context.getString(R.string.delete_recording_message))
+            .setPositiveButton(context.getString(R.string.action_delete)) { _, _ ->
                 // Delete audio file
                 note.audioFilePath?.let { path ->
-                    File(path).delete()
+                    val audioFile = File(path)
+                    if (audioFile.exists() && !audioFile.delete()) {
+                        android.util.Log.e("AudioPlayerDialog", "Failed to delete audio file: $path")
+                    }
                 }
                 onDeleteClick()
                 dismiss()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.action_cancel), null)
             .show()
     }
 

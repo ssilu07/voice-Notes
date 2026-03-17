@@ -23,7 +23,7 @@ object TextAnalyzer {
     /**
      * Extractive summarization: scores sentences by word frequency and returns top N.
      */
-    fun summarize(text: String, maxSentences: Int = 3): String {
+    fun summarize(text: String, maxSentences: Int = Constants.DEFAULT_SUMMARY_SENTENCES): String {
         if (text.isBlank()) return "Nothing to summarize."
 
         val sentences = splitSentences(text)
@@ -33,7 +33,7 @@ object TextAnalyzer {
         val wordFreq = mutableMapOf<String, Int>()
         sentences.forEach { sentence ->
             extractWords(sentence).forEach { word ->
-                if (word !in STOP_WORDS && word.length > 2) {
+                if (word !in STOP_WORDS && word.length >= Constants.MIN_WORD_LENGTH) {
                     wordFreq[word] = (wordFreq[word] ?: 0) + 1
                 }
             }
@@ -68,12 +68,12 @@ object TextAnalyzer {
     /**
      * Extract keywords/tags from text by word frequency (excluding stop words).
      */
-    fun generateTags(text: String, maxTags: Int = 5): List<String> {
+    fun generateTags(text: String, maxTags: Int = Constants.DEFAULT_MAX_TAGS): List<String> {
         if (text.isBlank()) return emptyList()
 
         val wordFreq = mutableMapOf<String, Int>()
         extractWords(text).forEach { word ->
-            if (word !in STOP_WORDS && word.length > 2) {
+            if (word !in STOP_WORDS && word.length >= Constants.MIN_WORD_LENGTH) {
                 wordFreq[word] = (wordFreq[word] ?: 0) + 1
             }
         }

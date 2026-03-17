@@ -13,7 +13,9 @@ data class Note(
     val noteType: String = TYPE_TEXT,
     val audioFilePath: String? = null,
     val isPinned: Boolean = false,
-    val category: String = CATEGORY_GENERAL
+    val category: String = CATEGORY_GENERAL,
+    val isArchived: Boolean = false,
+    val reminderTime: Long? = null
 ) {
     companion object {
         const val TYPE_TEXT = "text"
@@ -29,4 +31,5 @@ data class Note(
 
     fun isAudioNote(): Boolean = noteType == TYPE_AUDIO
     fun isTextNote(): Boolean = noteType == TYPE_TEXT
+    fun hasReminder(): Boolean = reminderTime != null && reminderTime > System.currentTimeMillis()
 }

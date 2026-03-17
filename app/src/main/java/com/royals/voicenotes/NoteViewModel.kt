@@ -1,19 +1,24 @@
 package com.royals.voicenotes
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class NoteViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class NoteViewModel @Inject constructor(
     private val repository: NoteRepository
-    val allNotes: LiveData<List<Note>>
+) : ViewModel() {
+
+    val allNotes: LiveData<List<Note>> = repository.allNotes
+    val archivedNotes: LiveData<List<Note>> = repository.getArchivedNotes()
 
     private val _notesCount = MutableLiveData<Int>()
     val notesCount: LiveData<Int> = _notesCount
@@ -37,9 +42,6 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     private val notesObserver = Observer<List<Note>> { updateStatistics() }
 
     init {
-        val noteDao = NoteDatabase.getDatabase(application).noteDao()
-        repository = NoteRepository(noteDao)
-        allNotes = repository.allNotes
         allNotes.observeForever(notesObserver)
         updateStatistics()
     }
@@ -50,6 +52,8 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun searchNotes(query: String): LiveData<List<Note>> = repository.searchNotes(query)
+
+    fun getNotesByCategory(category: String): LiveData<List<Note>> = repository.getNotesByCategory(category)
 
     fun insert(note: Note) = viewModelScope.launch {
         try {
@@ -86,8 +90,13 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteAll() = viewModelScope.launch {
         try {
-            val rowsDeleted = withContext(Dispatchers.IO) { repository.deleteAll() }
-            Log.d("NoteViewModel", "All notes deleted: $rowsDeleted rows")
+            // Clean up audio files before deleting all notes
+            val notes = allNotes.value ?: emptyList()
+            withContext(Dispatchers.IO) {
+                notes.forEach { note -> NoteUtils.deleteAudioFile(note, "NoteViewModel") }
+                repository.deleteAll()
+            }
+            Log.d("NoteViewModel", "All notes and associated audio files deleted")
             _operationStatus.postValue("All notes deleted")
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error deleting all notes", e)
@@ -105,6 +114,34 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error toggling pin", e)
         }
+    }
+
+    fun toggleArchive(note: Note) = viewModelScope.launch {
+        try {
+            withContext(Dispatchers.IO) {
+                repository.updateArchiveStatus(note.id, !note.isArchived)
+            }
+            val status = if (!note.isArchived) "Note archived" else "Note unarchived"
+            _operationStatus.postValue(status)
+        } catch (e: Exception) {
+            Log.e("NoteViewModel", "Error toggling archive", e)
+        }
+    }
+
+    fun setReminder(noteId: Int, reminderTime: Long?) = viewModelScope.launch {
+        try {
+            withContext(Dispatchers.IO) {
+                repository.updateReminderTime(noteId, reminderTime)
+            }
+            val status = if (reminderTime != null) "Reminder set" else "Reminder removed"
+            _operationStatus.postValue(status)
+        } catch (e: Exception) {
+            Log.e("NoteViewModel", "Error setting reminder", e)
+        }
+    }
+
+    suspend fun getNoteById(noteId: Int): Note? = withContext(Dispatchers.IO) {
+        repository.getNoteById(noteId)
     }
 
     private fun updateStatistics() = viewModelScope.launch {

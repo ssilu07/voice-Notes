@@ -20,18 +20,21 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.royals.voicenotes.Constants
 import com.royals.voicenotes.MainActivity
 import com.royals.voicenotes.Note
 import com.royals.voicenotes.NoteViewModel
 import com.royals.voicenotes.R
 import com.royals.voicenotes.SpeechHelper
 import com.royals.voicenotes.databinding.FragmentRecordBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@AndroidEntryPoint
 class RecordFragment : Fragment() {
 
     // --- LOG TAG ---
@@ -57,6 +60,7 @@ class RecordFragment : Fragment() {
      * Yeh feedback loop ko rokega.
      */
     private var stableText = ""
+    private var hasReceivedResults = false  // Tracks if onResults was called in current session
     // ---
 
     // Permission launcher
@@ -84,10 +88,34 @@ class RecordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated: Fragment view is created.")
 
+        // Restore state after rotation
+        savedInstanceState?.let { state ->
+            currentNoteText = state.getString(KEY_NOTE_TEXT, "")
+            currentLanguage = state.getString(KEY_LANGUAGE, "en-US")
+            stableText = state.getString(KEY_STABLE_TEXT, "")
+            binding.etNoteText.setText(currentNoteText)
+            if (currentNoteText.isNotEmpty()) {
+                binding.etNoteText.setSelection(currentNoteText.length)
+            }
+        }
+
         setupClickListeners()
         checkPermissionAndSetup()
         setupTextWatcher()
         observeViewModel()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_NOTE_TEXT, currentNoteText)
+        outState.putString(KEY_LANGUAGE, currentLanguage)
+        outState.putString(KEY_STABLE_TEXT, stableText)
+    }
+
+    companion object {
+        private const val KEY_NOTE_TEXT = "key_note_text"
+        private const val KEY_LANGUAGE = "key_language"
+        private const val KEY_STABLE_TEXT = "key_stable_text"
     }
 
     private fun observeViewModel() {
@@ -112,7 +140,7 @@ class RecordFragment : Fragment() {
         currentNoteText = note.content // TextWatcher ise update kar dega
         currentEditingNote = note
         binding.scrollView.smoothScrollTo(0, 0)
-        Toast.makeText(requireContext(), "Note loaded for editing.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.note_loaded_editing), Toast.LENGTH_SHORT).show()
     }
 
     private fun setupTextWatcher() {
@@ -137,7 +165,7 @@ class RecordFragment : Fragment() {
             Log.d(TAG, "FAB Record Clicked.")
             if (!isRecognitionAvailable) {
                 Log.e(TAG, "FAB Clicked, but recognition is NOT available.")
-                Toast.makeText(requireContext(), "Speech recognition not available", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.speech_not_available_status), Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             if (isListening) {
@@ -154,10 +182,10 @@ class RecordFragment : Fragment() {
         binding.btnClear.setOnClickListener {
             if (currentNoteText.isNotEmpty() || binding.etNoteText.text.toString().isNotEmpty()) {
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Clear Note")
-                    .setMessage("Are you sure you want to clear the current note?")
-                    .setPositiveButton("Clear") { _, _ -> clearCurrentNote() }
-                    .setNegativeButton("Cancel", null)
+                    .setTitle(getString(R.string.clear_note_title))
+                    .setMessage(getString(R.string.clear_note_message))
+                    .setPositiveButton(getString(R.string.clear_text)) { _, _ -> clearCurrentNote() }
+                    .setNegativeButton(getString(R.string.action_cancel), null)
                     .show()
             }
         }
@@ -190,6 +218,10 @@ class RecordFragment : Fragment() {
         Log.d(TAG, "setupSpeechRecognizer: Setting up...")
         try {
             if (::speechRecognizer.isInitialized) {
+                if (isListening) {
+                    isListening = false
+                    try { speechRecognizer.cancel() } catch (_: Exception) {}
+                }
                 speechRecognizer.destroy()
             }
             isRecognitionAvailable = SpeechRecognizer.isRecognitionAvailable(requireContext())
@@ -222,17 +254,16 @@ class RecordFragment : Fragment() {
                     val errorMessage = SpeechHelper.getErrorMessage(error)
                     Log.e(TAG, "[Listener] onError: Code $error - Message: $errorMessage")
 
-
-                    // Check karein ki kya UI par pehle se hi success message hai
-                    val isAlreadySuccessful = binding.tvStatus.text.toString().startsWith("✅")
-
-                    // Agar error "Code 5" hai AUR hum pehle hi successful ho chuke hain,
-                    // toh UI par error mat dikhao.
-                    if (error == SpeechRecognizer.ERROR_CLIENT && isAlreadySuccessful) {
-                        Log.w(TAG, "[Listener] Ignored UI update for Error 5, as success was already reported.")
+                    // ERROR_CLIENT after successful results is a known Android quirk
+                    // where stopListening() triggers a spurious error callback.
+                    // Use state flag instead of UI text to detect this reliably.
+                    if (error == SpeechRecognizer.ERROR_CLIENT && hasReceivedResults) {
+                        Log.w(TAG, "[Listener] Ignored spurious ERROR_CLIENT after successful recognition.")
                     } else {
-                        // Baaki sabhi errors (No match, Network, etc.) ko UI par dikhao
-                        binding.tvStatus.text = "❌ $errorMessage"
+                        if (_binding != null) {
+                            binding.tvStatus.text = "❌ $errorMessage"
+                        }
+                        Log.e(TAG, "[Listener] Showing error to user: $errorMessage")
                     }
                     stopListening()
                 }
@@ -240,6 +271,7 @@ class RecordFragment : Fragment() {
                     val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     if (!matches.isNullOrEmpty()) {
                         val recognizedText = matches[0]
+                        hasReceivedResults = true
                         Log.i(TAG, "[Listener] onResults: SUCCESS! Text: $recognizedText")
 
                         // --- FIX ---
@@ -294,6 +326,7 @@ class RecordFragment : Fragment() {
                 // --- FIX ---
                 // Recording shuru karne se pehle current text ko 'stableText' mein save karein
                 stableText = binding.etNoteText.text.toString()
+                hasReceivedResults = false
                 // ---
 
                 isListening = true
@@ -319,12 +352,14 @@ class RecordFragment : Fragment() {
             Log.d(TAG, "stopListening: Stopping...")
             isListening = false
             resetRecordingState()
-            try {
-                speechRecognizer.stopListening()
-            } catch (e: Exception) {
-                Log.e(TAG, "stopListening: FAILED to stop.", e)
+            if (::speechRecognizer.isInitialized) {
+                try {
+                    speechRecognizer.stopListening()
+                } catch (e: Exception) {
+                    Log.e(TAG, "stopListening: FAILED to stop.", e)
+                }
             }
-            if (!binding.tvStatus.text.toString().startsWith("✅")) {
+            if (_binding != null && !binding.tvStatus.text.toString().startsWith("✅")) {
                 binding.tvStatus.text = "Tap microphone to start recording"
             }
         }
@@ -339,9 +374,9 @@ class RecordFragment : Fragment() {
     private fun animateRecordingButton() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (isListening) {
-                binding.fabRecord.animate().scaleX(1.2f).scaleY(1.2f).setDuration(500).withEndAction {
+                binding.fabRecord.animate().scaleX(1.2f).scaleY(1.2f).setDuration(Constants.RECORDING_ANIMATION_DURATION_MS).withEndAction {
                     if (isListening) {
-                        binding.fabRecord.animate().scaleX(1.0f).scaleY(1.0f).setDuration(500).start()
+                        binding.fabRecord.animate().scaleX(1.0f).scaleY(1.0f).setDuration(Constants.RECORDING_ANIMATION_DURATION_MS).start()
                     }
                 }.start()
                 delay(1000)
@@ -353,8 +388,8 @@ class RecordFragment : Fragment() {
         // Ab 'currentNoteText' hamesha up-to-date rahega 'TextWatcher' ki wajah se
         val noteText = currentNoteText.trim()
 
-        if (noteText.isEmpty() || noteText.length < 3) {
-            Toast.makeText(requireContext(), "Note is too short", Toast.LENGTH_SHORT).show()
+        if (noteText.isEmpty() || noteText.length < Constants.MIN_NOTE_LENGTH) {
+            Toast.makeText(requireContext(), getString(R.string.note_too_short), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -362,7 +397,7 @@ class RecordFragment : Fragment() {
             val currentTime = SimpleDateFormat("MMM dd, yyyy - HH:mm", Locale.getDefault()).format(
                 Date()
             )
-            val title = if (noteText.length > 30) noteText.substring(0, 30) + "..." else noteText
+            val title = if (noteText.length > Constants.MAX_TITLE_LENGTH) noteText.substring(0, Constants.MAX_TITLE_LENGTH) + "..." else noteText
 
             if (currentEditingNote != null) {
                 // UPDATE existing note
@@ -399,14 +434,20 @@ class RecordFragment : Fragment() {
         if (isListening) {
             stopListening()
         }
+        // Cancel any pending recognition to free microphone resource
+        if (::speechRecognizer.isInitialized) {
+            try { speechRecognizer.cancel() } catch (_: Exception) {}
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d(TAG, "onDestroyView: Fragment view destroyed. Cleaning up speech recognizer.")
+        isListening = false
+        isRecognitionAvailable = false
         if (::speechRecognizer.isInitialized) {
             try {
-                speechRecognizer.stopListening()
+                speechRecognizer.cancel()
                 speechRecognizer.destroy()
             } catch (e: Exception) {
                 Log.e(TAG, "onDestroyView: Error destroying speech recognizer.", e)
