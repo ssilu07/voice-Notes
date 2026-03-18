@@ -1,5 +1,7 @@
 package com.royals.voicenotes
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,42 +35,53 @@ class NotesAdapter(
         }
     }
 
+    override fun submitList(list: List<Note>?) {
+        super.submitList(if (list != null) ArrayList(list) else null)
+    }
+
     inner class NoteViewHolder(private val binding: ItemNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(note: Note) {
             try {
-                binding.apply {
-                    tvNoteTitle.text = note.title
-                    tvNoteContent.text = note.content
-                    tvNoteTimestamp.text = note.timestamp
+                binding.tvNoteTitle.text = note.title
+                binding.tvNoteContent.text = note.content
+                binding.tvNoteTimestamp.text = note.timestamp
 
-                    val wordCount = if (note.content.isBlank()) 0
-                    else note.content.trim().split("\\s+".toRegex()).size
-                    tvWordCount.text = "$wordCount words"
+                val wordCount = if (note.content.isBlank()) 0
+                else note.content.trim().split("\\s+".toRegex()).size
+                binding.tvWordCount.text = "$wordCount words"
 
-                    // Pin indicator
-                    btnPin.setImageResource(
-                        if (note.isPinned) R.drawable.ic_pin_filled else R.drawable.ic_pin
-                    )
-                    btnPin.visibility = View.VISIBLE
+                // Pin - use single drawable, change color with setColorFilter
+                setPinColor(note.isPinned)
 
-                    btnPin.setOnClickListener {
-                        onPinClick(note)
-                    }
-
-                    btnDelete.setOnClickListener { onDeleteClick(note) }
-                    btnEdit.setOnClickListener { onEditClick(note) }
-                    btnShare.setOnClickListener { onShareClick(note) }
-                    btnExport.setOnClickListener { onExportClick(note) }
-                    root.setOnClickListener { onEditClick(note) }
-
-                    // Fade-in animation
-                    root.alpha = 0f
-                    root.animate().alpha(1f).setDuration(200).start()
+                binding.btnPin.setOnClickListener {
+                    setPinColor(!note.isPinned)
+                    onPinClick(note)
                 }
+
+                binding.btnDelete.setOnClickListener { onDeleteClick(note) }
+                binding.btnEdit.setOnClickListener { onEditClick(note) }
+                binding.btnShare.setOnClickListener { onShareClick(note) }
+                binding.btnExport.setOnClickListener { onExportClick(note) }
+
+                // Card click - but NOT intercept child button clicks
+                binding.root.setOnClickListener { onEditClick(note) }
+
+                // Fade-in animation
+                binding.root.alpha = 0f
+                binding.root.animate().alpha(1f).setDuration(200).start()
+
             } catch (e: Exception) {
                 Log.e("NotesAdapter", "Error binding note: ${note.id}", e)
+            }
+        }
+
+        private fun setPinColor(isPinned: Boolean) {
+            if (isPinned) {
+                binding.btnPin.setColorFilter(Color.parseColor("#E53935"), PorterDuff.Mode.SRC_IN)
+            } else {
+                binding.btnPin.setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN)
             }
         }
     }

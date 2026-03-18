@@ -106,11 +106,11 @@ class NoteViewModel @Inject constructor(
 
     fun togglePin(note: Note) = viewModelScope.launch {
         try {
+            val newPinned = !note.isPinned
             withContext(Dispatchers.IO) {
-                repository.updatePinStatus(note.id, !note.isPinned)
+                repository.updatePinStatus(note.id, newPinned)
             }
-            val status = if (!note.isPinned) "Note pinned" else "Note unpinned"
-            _operationStatus.postValue(status)
+            _operationStatus.postValue(if (newPinned) "Note pinned" else "Note unpinned")
         } catch (e: Exception) {
             Log.e("NoteViewModel", "Error toggling pin", e)
         }

@@ -243,7 +243,6 @@ class SavedNotesFragment : Fragment() {
                     ItemTouchHelper.RIGHT -> {
                         // Toggle Pin
                         noteViewModel.togglePin(note)
-                        notesAdapter.notifyItemChanged(position)
                     }
                     ItemTouchHelper.LEFT -> {
                         // Archive
