@@ -11,62 +11,79 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="100dp">
 
-            <androidx.cardview.widget.CardView
+            <!-- Header -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="6dp"
-                android:layout_margin="4dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Voice to Text"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:letterSpacing="-0.02" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Speak and let us transcribe"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EN"
+                    android:background="@drawable/language_indicator_bg"
+                    android:textColor="@color/primary_500"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp" />
+            </LinearLayout>
+
+            <!-- Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/divider_color"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp"
-                    android:background="@color/surface">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_mic"
-                            android:layout_marginEnd="12dp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Voice to Text"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary" />
-
-                        <TextView
-                            android:id="@+id/tvLanguage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="EN"
-                            android:background="@drawable/language_indicator_bg"
-                            android:textColor="@color/primary_500"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="4dp" />
-                    </LinearLayout>
+                    android:padding="24dp">
 
                     <TextView
                         android:id="@+id/tvStatus"
@@ -75,98 +92,106 @@
                         android:text="Tap microphone to start recording"
                         android:textAlignment="center"
                         android:textColor="@color/primary_500"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="20dp"
                         android:background="@drawable/status_bg"
-                        android:padding="12dp" />
+                        android:padding="14dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="16dp">
+                        android:text="Transcription"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.05"
+                        android:layout_marginBottom="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Your voice will appear here..."
-                            android:textSize="12sp"
-                            android:textColor="@color/text_secondary"
-                            android:layout_marginBottom="4dp" />
-
-                        <EditText
-                            android:id="@+id/etNoteText"
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:minLines="4"
-                            android:maxLines="8"
-                            android:gravity="top|start"
-                            android:inputType="textMultiLine|textCapSentences"
-                            android:scrollbars="vertical"
-                            android:textSize="16sp"
-                            android:lineSpacingMultiplier="1.2"
-                            android:background="@drawable/edittext_background"
-                            android:padding="12dp" />
-                    </LinearLayout>
+                    <EditText
+                        android:id="@+id/etNoteText"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:minLines="4"
+                        android:maxLines="8"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:scrollbars="vertical"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:lineSpacingMultiplier="1.3"
+                        android:background="@drawable/edittext_background"
+                        android:padding="16dp"
+                        android:hint="Your voice will appear here..."
+                        android:textColorHint="@color/text_hint" />
 
                     <TextView
                         android:id="@+id/tvCharCount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="0 characters • 0 words"
+                        android:text="0 characters  |  0 words"
                         android:textSize="12sp"
                         android:textColor="@color/text_hint"
                         android:gravity="end"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_marginTop="10dp" />
 
+                    <!-- Action Buttons -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:layout_marginTop="20dp">
 
                         <Button
                             android:id="@+id/btnClear"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="8dp"
                             android:text="Clear"
-                            android:textColor="@color/red_700"
+                            android:textColor="@color/red_500"
+                            android:textSize="14sp"
                             android:background="@drawable/button_outline_red"
-                            android:textAllCaps="false" />
+                            android:textAllCaps="false"
+                            android:textStyle="bold" />
 
                         <Button
                             android:id="@+id/btnSave"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="48dp"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
                             android:text="Save Note"
                             android:textColor="@android:color/white"
+                            android:textSize="14sp"
                             android:background="@drawable/button_background_green"
-                            android:textAllCaps="false" />
+                            android:textAllCaps="false"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </ScrollView>
 
+    <!-- Floating Mic Button -->
     <FrameLayout
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:background="@drawable/fab_background"
-        android:elevation="8dp">
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_record_button"
+        android:elevation="12dp">
 
         <ImageView
             android:id="@+id/fabRecord"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_mic"
+            app:tint="@android:color/white"
             android:contentDescription="Record voice"
             android:clickable="true"
             android:focusable="true"

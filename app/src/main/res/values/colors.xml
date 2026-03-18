@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/values/colors.xml -->
 <resources>
     <!-- Basic Colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- Primary Colors -->
-    <color name="primary_50">#E8F2FF</color>
-    <color name="primary_100">#C3DDFF</color>
-    <color name="primary_200">#9BC7FF</color>
-    <color name="primary_300">#73B1FF</color>
-    <color name="primary_400">#57A0FF</color>
-    <color name="primary_500">#4285F4</color>
-    <color name="primary_600">#3B7AE0</color>
-    <color name="primary_700">#336BC7</color>
-    <color name="primary_800">#2B5CAF</color>
-    <color name="primary_900">#1E4387</color>
+    <!-- Primary Colors - Deep Indigo -->
+    <color name="primary_50">#EEF2FF</color>
+    <color name="primary_100">#E0E7FF</color>
+    <color name="primary_200">#C7D2FE</color>
+    <color name="primary_300">#A5B4FC</color>
+    <color name="primary_400">#818CF8</color>
+    <color name="primary_500">#6366F1</color>
+    <color name="primary_600">#4F46E5</color>
+    <color name="primary_700">#4338CA</color>
+    <color name="primary_800">#3730A3</color>
+    <color name="primary_900">#312E81</color>
 
-    <!-- Secondary Colors -->
-    <color name="secondary_50">#FFF3E0</color>
-    <color name="secondary_100">#FFE0B2</color>
-    <color name="secondary_200">#FFCC80</color>
-    <color name="secondary_300">#FFB74D</color>
-    <color name="secondary_400">#FFA726</color>
-    <color name="secondary_500">#FF9800</color>
-    <color name="secondary_600">#FB8C00</color>
-    <color name="secondary_700">#F57C00</color>
-    <color name="secondary_800">#EF6C00</color>
-    <color name="secondary_900">#E65100</color>
+    <!-- Secondary Colors - Warm Coral -->
+    <color name="secondary_50">#FFF1F2</color>
+    <color name="secondary_100">#FFE4E6</color>
+    <color name="secondary_200">#FECDD3</color>
+    <color name="secondary_300">#FDA4AF</color>
+    <color name="secondary_400">#FB7185</color>
+    <color name="secondary_500">#F43F5E</color>
+    <color name="secondary_600">#E11D48</color>
+    <color name="secondary_700">#BE123C</color>
+    <color name="secondary_800">#9F1239</color>
+    <color name="secondary_900">#881337</color>
 
     <!-- Accent Colors -->
-    <color name="accent_500">#FF6B35</color>
+    <color name="accent_500">#F59E0B</color>
 
     <!-- Text Colors -->
-    <color name="text_primary">#1F2937</color>
-    <color name="text_secondary">#6B7280</color>
-    <color name="text_hint">#9CA3AF</color>
+    <color name="text_primary">#1E1B4B</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_hint">#94A3B8</color>
 
     <!-- Background Colors -->
-    <color name="background">#F9FAFB</color>
+    <color name="background">#F8FAFC</color>
     <color name="surface">#FFFFFF</color>
-    <color name="divider_color">#E5E7EB</color>
+    <color name="divider_color">#E2E8F0</color>
 
     <!-- Status Colors -->
     <color name="green_50">#ECFDF5</color>
@@ -100,11 +99,11 @@
     <color name="purple_900">#581C87</color>
 
     <!-- Dark Theme Colors -->
-    <color name="dark_background">#121212</color>
-    <color name="dark_surface">#1E1E1E</color>
-    <color name="dark_text_primary">#FFFFFF</color>
-    <color name="dark_text_secondary">#B3FFFFFF</color>
-    <color name="dark_text_hint">#61FFFFFF</color>
+    <color name="dark_background">#0F0D23</color>
+    <color name="dark_surface">#1A1833</color>
+    <color name="dark_text_primary">#F1F5F9</color>
+    <color name="dark_text_secondary">#94A3B8</color>
+    <color name="dark_text_hint">#64748B</color>
 
     <!-- Material Design System Colors -->
     <color name="colorPrimary">@color/primary_500</color>
@@ -117,7 +116,7 @@
     <color name="colorAccent">@color/secondary_500</color>
     <color name="colorBackground">@color/background</color>
     <color name="colorSurface">@color/surface</color>
-    <color name="colorError">@color/red_600</color>
+    <color name="colorError">@color/red_500</color>
     <color name="colorOnBackground">@color/text_primary</color>
     <color name="colorOnSurface">@color/text_primary</color>
     <color name="colorOnError">@color/white</color>
@@ -126,23 +125,41 @@
     <color name="transparent">#00000000</color>
     <color name="semi_transparent">#80000000</color>
 
-    <!-- Card feature colors (light variants) -->
-    <color name="card_green_bg">#D7F9E3</color>
-    <color name="card_green_text">#2E7D32</color>
-    <color name="card_blue_bg">#D6EAF8</color>
-    <color name="card_blue_text">#2874A6</color>
-    <color name="card_purple_bg">#E8DAEF</color>
-    <color name="card_purple_text">#884EA0</color>
-    <color name="card_orange_bg">#FEF9E7</color>
-    <color name="card_orange_text">#B7950B</color>
+    <!-- Card feature colors (light variants) - Modern gradient-inspired -->
+    <color name="card_green_bg">#ECFDF5</color>
+    <color name="card_green_text">#059669</color>
+    <color name="card_blue_bg">#EEF2FF</color>
+    <color name="card_blue_text">#4F46E5</color>
+    <color name="card_purple_bg">#FAF5FF</color>
+    <color name="card_purple_text">#7C3AED</color>
+    <color name="card_orange_bg">#FFFBEB</color>
+    <color name="card_orange_text">#D97706</color>
 
     <!-- Stats card -->
-    <color name="stats_divider">#E0E0E0</color>
-    <color name="stats_label">#666666</color>
+    <color name="stats_divider">#E2E8F0</color>
+    <color name="stats_label">#64748B</color>
 
     <!-- Dialog surface -->
     <color name="dialog_surface">#FFFFFF</color>
 
     <!-- Seekbar/progress -->
     <color name="seekbar_color">@color/primary_500</color>
+
+    <!-- Gradient colors -->
+    <color name="gradient_start">#6366F1</color>
+    <color name="gradient_end">#8B5CF6</color>
+    <color name="gradient_coral_start">#F43F5E</color>
+    <color name="gradient_coral_end">#FB7185</color>
+    <color name="gradient_amber_start">#F59E0B</color>
+    <color name="gradient_amber_end">#FBBF24</color>
+    <color name="gradient_emerald_start">#10B981</color>
+    <color name="gradient_emerald_end">#34D399</color>
+
+    <!-- Bottom nav -->
+    <color name="bottom_nav_bg">#FFFFFF</color>
+    <color name="bottom_nav_indicator">#EEF2FF</color>
+
+    <!-- Greeting card -->
+    <color name="greeting_bg_start">#6366F1</color>
+    <color name="greeting_bg_end">#A855F7</color>
 </resources>

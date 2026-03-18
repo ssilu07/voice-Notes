@@ -12,9 +12,10 @@
         <item name="colorSecondaryVariant">@color/secondary_700</item>
         <item name="colorOnSecondary">@color/white</item>
 
-        <!-- Status bar color -->
-        <item name="android:statusBarColor">@color/primary_500</item>
+        <!-- Status bar color - transparent for edge-to-edge feel -->
+        <item name="android:statusBarColor">@color/background</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/bottom_nav_bg</item>
 
         <!-- Background colors -->
         <item name="android:colorBackground">@color/background</item>
@@ -23,25 +24,25 @@
         <item name="colorOnSurface">@color/text_primary</item>
 
         <!-- Error color -->
-        <item name="colorError">@color/red_600</item>
+        <item name="colorError">@color/red_500</item>
         <item name="colorOnError">@color/white</item>
 
         <!-- Enable window content transitions -->
         <item name="android:windowContentTransitions">true</item>
+
+        <!-- Shape theming -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeSmall</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeMedium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeLarge</item>
     </style>
 
     <!-- Alternative theme using AppCompat (fallback) -->
     <style name="Theme.VoiceNotes.AppCompat" parent="Theme.AppCompat.DayNight">
-        <!-- Primary brand color -->
         <item name="colorPrimary">@color/primary_500</item>
         <item name="colorPrimaryDark">@color/primary_700</item>
         <item name="colorAccent">@color/secondary_500</item>
-
-        <!-- Status bar color -->
-        <item name="android:statusBarColor">@color/primary_500</item>
+        <item name="android:statusBarColor">@color/background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-
-        <!-- Background colors -->
         <item name="android:colorBackground">@color/background</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
@@ -55,7 +56,7 @@
         <item name="postSplashScreenTheme">@style/Theme.VoiceNotes</item>
     </style>
 
-    <!-- No ActionBar theme for activities that use Toolbar -->
+    <!-- No ActionBar theme -->
     <style name="Theme.VoiceNotes.NoActionBar" parent="Theme.VoiceNotes">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

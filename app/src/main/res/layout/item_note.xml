@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,31 +8,32 @@
     android:layout_marginBottom="12dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="3dp"
-    android:layout_margin="4dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/divider_color"
+    app:cardBackgroundColor="@color/surface"
+    app:rippleColor="#206366F1">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/surface">
+        android:padding="16dp">
 
-        <!-- Header with Title and Actions -->
+        <!-- Header with Title and Pin -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Note Icon -->
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_note"
-                android:layout_marginEnd="12dp" />
+            <!-- Category Accent Dot -->
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_icon_circle_indigo" />
 
             <!-- Title -->
             <TextView
@@ -45,59 +46,18 @@
                 android:textColor="@color/text_primary"
                 android:maxLines="1"
                 android:ellipsize="end"
+                android:letterSpacing="-0.01"
                 tools:text="Sample note title..." />
 
-            <!-- Action Buttons Container -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/btnPin"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_pin"
-                    android:contentDescription="Pin note" />
-
-                <ImageButton
-                    android:id="@+id/btnShare"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_share"
-                    android:contentDescription="Share note" />
-
-                <ImageButton
-                    android:id="@+id/btnExport"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_export"
-                    android:contentDescription="Export note" />
-
-                <ImageButton
-                    android:id="@+id/btnEdit"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_edit"
-                    android:contentDescription="Edit note" />
-
-                <ImageButton
-                    android:id="@+id/btnDelete"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_delete"
-                    android:contentDescription="Delete note" />
-
-            </LinearLayout>
+            <!-- Pin Button -->
+            <ImageButton
+                android:id="@+id/btnPin"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_pin"
+                android:contentDescription="Pin note"
+                android:padding="6dp" />
 
         </LinearLayout>
 
@@ -106,11 +66,12 @@
             android:id="@+id/tvNoteContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="20dp"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
-            android:lineSpacingMultiplier="1.3"
-            android:maxLines="3"
+            android:lineSpacingMultiplier="1.4"
+            android:maxLines="2"
             android:ellipsize="end"
             tools:text="This is a sample note content that shows preview of the actual note text..." />
 
@@ -119,6 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:layout_marginStart="20dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -128,28 +90,67 @@
                 android:layout_height="wrap_content"
                 android:text="156 words"
                 android:textSize="11sp"
-                android:textColor="@color/text_hint"
+                android:textColor="@color/primary_500"
                 android:background="@drawable/word_count_bg"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="3dp" />
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
+            <!-- Action Buttons - compact -->
+            <ImageButton
+                android:id="@+id/btnShare"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_share"
+                android:contentDescription="Share note"
+                android:padding="5dp" />
+
+            <ImageButton
+                android:id="@+id/btnExport"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_export"
+                android:contentDescription="Export note"
+                android:padding="5dp" />
+
+            <ImageButton
+                android:id="@+id/btnEdit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="2dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_edit"
+                android:contentDescription="Edit note"
+                android:padding="5dp" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="Delete note"
+                android:padding="5dp" />
+
             <TextView
                 android:id="@+id/tvNoteTimestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:layout_marginStart="8dp"
+                android:textSize="11sp"
                 android:textColor="@color/text_hint"
-                android:drawableStart="@drawable/ic_time"
-                android:drawablePadding="4dp"
-                tools:text="Dec 15, 2024 - 14:30" />
+                tools:text="14:30" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

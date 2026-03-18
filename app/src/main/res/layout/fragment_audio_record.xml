@@ -11,13 +11,17 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
             android:gravity="center">
 
             <!-- Header -->
@@ -26,14 +30,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="32dp">
+                android:layout_marginBottom="40dp">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_mic"
-                    android:layout_marginEnd="12dp"
-                    app:tint="#2E7D32" />
+                <FrameLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="12dp">
+
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_icon_circle_green" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_mic"
+                        app:tint="@color/green_600" />
+                </FrameLayout>
 
                 <TextView
                     android:layout_width="0dp"
@@ -42,7 +57,8 @@
                     android:text="Voice Recording"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/text_primary"
+                    android:letterSpacing="-0.02" />
 
                 <ImageButton
                     android:id="@+id/btnClose"
@@ -50,15 +66,19 @@
                     android:layout_height="40dp"
                     android:src="@drawable/ic_close"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Close" />
+                    android:contentDescription="Close"
+                    app:tint="@color/text_secondary" />
             </LinearLayout>
 
             <!-- Recording Card -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/divider_color"
+                app:cardBackgroundColor="@color/surface"
                 android:layout_marginBottom="24dp">
 
                 <LinearLayout
@@ -66,8 +86,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="32dp"
-                    android:gravity="center"
-                    android:background="@color/surface">
+                    android:gravity="center">
 
                     <!-- Status Text -->
                     <TextView
@@ -75,16 +94,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ready to record"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_500"
-                        android:layout_marginBottom="24dp" />
+                        android:layout_marginBottom="28dp" />
 
                     <!-- Recording Indicator -->
                     <View
                         android:id="@+id/recordingIndicator"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
                         android:background="@drawable/recording_indicator_bg"
                         android:visibility="gone"
                         android:layout_marginBottom="24dp" />
@@ -95,35 +114,37 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="48sp"
+                        android:textSize="56sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
                         android:fontFamily="monospace"
+                        android:letterSpacing="0.05"
                         android:layout_marginBottom="32dp" />
 
-                    <!-- Waveform Visualization Placeholder -->
+                    <!-- Waveform -->
                     <View
                         android:id="@+id/waveformView"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:background="@drawable/waveform_bg"
-                        android:layout_marginBottom="24dp" />
+                        android:layout_marginBottom="28dp" />
 
-                    <!-- Recording Control Button -->
+                    <!-- Recording Control -->
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/btnStopRecording"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_stop"
                         app:fabSize="normal"
-                        app:backgroundTint="#E53935"
+                        app:backgroundTint="@color/secondary_500"
                         app:tint="@android:color/white"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.FAB"
                         android:enabled="false" />
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Playback Controls (Hidden initially) -->
+            <!-- Playback Controls -->
             <LinearLayout
                 android:id="@+id/playbackControls"
                 android:layout_width="match_parent"
@@ -132,24 +153,26 @@
                 android:visibility="gone"
                 android:layout_marginBottom="24dp">
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp">
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider_color"
+                    app:cardBackgroundColor="@color/surface">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp"
-                        android:background="@color/surface">
+                        android:padding="20dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preview Recording"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary"
                             android:layout_marginBottom="16dp" />
@@ -167,11 +190,13 @@
                                 android:src="@drawable/ic_play"
                                 android:background="@drawable/circle_button_bg"
                                 android:contentDescription="Play/Pause"
-                                android:enabled="false" />
+                                android:padding="16dp"
+                                android:enabled="false"
+                                app:tint="@color/primary_500" />
 
                         </LinearLayout>
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <!-- Action Buttons -->
@@ -180,18 +205,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="8dp">
 
                 <Button
                     android:id="@+id/btnDiscardRecording"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="Discard"
-                    android:textColor="@color/red_700"
+                    android:textColor="@color/red_500"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:background="@drawable/button_outline_red"
                     android:textAllCaps="false"
                     android:drawableStart="@drawable/ic_delete"
@@ -200,13 +225,13 @@
                 <Button
                     android:id="@+id/btnSaveRecording"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Save Recording"
+                    android:text="Save"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:background="@drawable/button_background_green"
                     android:textAllCaps="false"
                     android:drawableStart="@drawable/ic_save"

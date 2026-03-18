@@ -6,15 +6,17 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.royals.voicenotes.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -85,46 +87,58 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Bottom Navigation ke liye custom listener
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    // Pop back stack to home if we're not already there
-                    if (navController.currentDestination?.id != R.id.nav_home) {
-                        navController.popBackStack(R.id.nav_home, false)
-                    }
-                    true
-                }
-                R.id.nav_saved_notes -> {
-                    // Navigate to saved notes, clearing back stack
-                    if (navController.currentDestination?.id != R.id.nav_saved_notes) {
-                        navController.navigate(R.id.nav_saved_notes)
-                    }
-                    true
-                }
-                else -> false
+        // Custom tab click listeners
+        binding.tabHome.setOnClickListener {
+            if (navController.currentDestination?.id != R.id.nav_home) {
+                navController.popBackStack(R.id.nav_home, false)
             }
+            updateTabSelection(isHomeSelected = true)
+        }
+
+        binding.tabNotes.setOnClickListener {
+            if (navController.currentDestination?.id != R.id.nav_saved_notes) {
+                navController.navigate(R.id.nav_saved_notes)
+            }
+            updateTabSelection(isHomeSelected = false)
         }
 
         // NavController ke destination changes ko listen karein
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            // Bottom navigation item ko select karein based on current destination
             when (destination.id) {
-                R.id.nav_home -> binding.bottomNavigationView.menu.findItem(R.id.nav_home)?.isChecked = true
-                R.id.nav_saved_notes -> binding.bottomNavigationView.menu.findItem(R.id.nav_saved_notes)?.isChecked = true
+                R.id.nav_home -> updateTabSelection(isHomeSelected = true)
+                R.id.nav_saved_notes -> updateTabSelection(isHomeSelected = false)
             }
         }
 
         binding.fab.setOnClickListener {
             navController.navigate(R.id.nav_record)
         }
+
+        // Set initial state
+        updateTabSelection(isHomeSelected = true)
+    }
+
+    private fun updateTabSelection(isHomeSelected: Boolean) {
+        val activeColor = ContextCompat.getColor(this, R.color.primary_500)
+        val inactiveColor = ContextCompat.getColor(this, R.color.text_hint)
+
+        // Home tab
+        binding.icHome.setColorFilter(if (isHomeSelected) activeColor else inactiveColor)
+        binding.tvHome.setTextColor(if (isHomeSelected) activeColor else inactiveColor)
+        binding.tvHome.setTypeface(null, if (isHomeSelected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+
+        // Notes tab
+        binding.icNotes.setColorFilter(if (!isHomeSelected) activeColor else inactiveColor)
+        binding.tvNotes.setTextColor(if (!isHomeSelected) activeColor else inactiveColor)
+        binding.tvNotes.setTypeface(null, if (!isHomeSelected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
     }
 
     private fun observeViewModel() {
         // Jab 'Edit' click ho, Home tab par switch karein
         noteViewModel.navigateToHome.observe(this) { event ->
             event.getContentIfNotHandled()?.let {
-                binding.bottomNavigationView.selectedItemId = R.id.nav_home
+                navController.popBackStack(R.id.nav_home, false)
+                updateTabSelection(isHomeSelected = true)
             }
         }
     }
